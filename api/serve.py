@@ -22,18 +22,6 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-# return list of mp4 files in the directory
-def get_video_list():
-    video_list = []
-    for file in os.listdir('./public/Results-01-28'):
-        if file.endswith('.mp4'):
-            video_list.append(file)
-    return video_list
-
-@app.route('/api/video_list')
-def video_list():
-    return jsonify(get_video_list())
-
 @app.route('/api/get_all_comments', methods=['GET'])
 def get_all_comments():
     res = get_db().cursor().execute("SELECT * FROM comments").fetchall()
