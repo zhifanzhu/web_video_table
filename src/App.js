@@ -2,6 +2,9 @@ import './App.css';
 import React, { useRef, useEffect } from 'react'
 import Select from 'react-select'
 
+const hostname = '45.76.11.163';
+const port = 8000;
+
 const options = [
   { value: 'Unfinished', label: 'NotCheck' },
   { value: 'Success', label: 'Success' },
@@ -20,7 +23,7 @@ function App(props) {
       return;
     }
     Promise.all([
-      fetch("http://localhost:10100/api/get_all_comments"),
+      fetch(`http://${hostname}:${port}/api/get_all_comments`),
     ]).then(resp => Promise.all(resp.map(r => r.json())))
       .then(([df]) => {
         comments.current = df;
@@ -372,7 +375,7 @@ function App(props) {
             onChange={(e) => {
               comments.current[video] = e.value;
               console.log(comments.current[video]);
-              fetch("http://localhost:10100/api/update_comment", {
+              fetch(`http://${hostname}:${port}/api/update_comment`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
