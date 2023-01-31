@@ -17,6 +17,7 @@ if __name__ == '__main__':
     mask_videos_dir = '/home/skynet/Zhifan/ihoi/outputs/tmp/v3_mask_videos'
     videos = glob.glob(osp.join(args.src, '*_action.mp4'))
     num_missing = 0
+    os.makedirs(args.dst, exist_ok=True)
     for video in tqdm.tqdm(videos):
         mask_basename = osp.basename(video.replace('_action', ''))
         shutil.copyfile(video, osp.join(args.dst, osp.basename(video)))

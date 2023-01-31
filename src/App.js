@@ -2,9 +2,11 @@ import './App.css';
 import React, { useRef, useEffect } from 'react'
 import Select from 'react-select'
 
-const version_name = 'results-Jan-29';
-// const hostname = '45.76.11.163';
-const hostname = window.location.hostname;
+// const _url_arr = window.location.href.split('/');
+// const version_name = _url_arr[_url_arr.length - 2]; // 'results-Jan-29';
+const version_name = 'Results-01-28';
+// const version_name = 'results-Jan-29';
+const hostname = '45.76.11.163';
 const port = 8000;
 
 const options = [
@@ -17,9 +19,10 @@ const options = [
   { value: 'Unexplained', label: 'Unexplained' },
 ]
 
-function App(props) {
+function App() {
   const [loaded, setLoaded] = React.useState(false);
   let comments = useRef(null);
+
   useEffect(() => {
     if (loaded) {
       return;
