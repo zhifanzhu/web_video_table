@@ -22,25 +22,24 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
-@app.route('/api/get_all_comments', methods=['GET'])
-def get_all_comments():
-    res = get_db().cursor().execute("SELECT * FROM comments").fetchall()
-    # convert list to dict
-    res = {i[0]: i[1] for i in res}
+@app.route('/api/<version_name>/get_all_comments', methods=['GET'])
+def get_all_comments(version_name):
+    res = get_db().cursor().execute(f"SELECT * FROM '{version_name}'").fetchall()
+    res = {i[0]: i[1] for i in res}  # convert list to dict
     return jsonify(res)
 
-@app.route('/api/get_comment', methods=['POST'])
-def get_comment():
+@app.route('/api/<version_name>/get_comment', methods=['POST'])
+def get_comment(version_name):
     video = request.get_json()['video']
-    return jsonify(get_db().cursor().execute("SELECT comment FROM comments WHERE video = ?", (video,)).fetchone())
+    return jsonify(get_db().cursor().execute(f"SELECT comment FROM '{version_name}' WHERE video = ?", (video,)).fetchone())
 
 """ update comment for a video """
-@app.route('/api/update_comment', methods=['POST'])
-def update_comment():
+@app.route('/api/<version_name>/update_comment', methods=['POST'])
+def update_comment(version_name):
     data = request.get_json()
     video = data['video']
     comment = data['comment']
-    get_db().cursor().execute("UPDATE comments SET comment = ? WHERE video = ?", (comment, video))
+    get_db().cursor().execute(f"UPDATE '{version_name}' SET comment = ? WHERE video = ?", (comment, video))
     get_db().commit()
     return jsonify('success')
     # return jsonify(get_db().cursor().execute("SELECT * FROM comments").fetchall())

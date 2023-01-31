@@ -2,6 +2,7 @@ import os
 import json
 import sqlite3
 
+raise NotImplementedError
 DATABASE = './database.db'
 
 if __name__ == '__main__':
