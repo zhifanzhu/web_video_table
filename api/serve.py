@@ -43,3 +43,13 @@ def update_comment(version_name):
     get_db().commit()
     return jsonify('success')
     # return jsonify(get_db().cursor().execute("SELECT * FROM comments").fetchall())
+
+
+@app.route("/upload_database", methods=["POST"])
+def upload():
+    file = request.files.get("file")
+    if file:
+        file.save("database.db")
+        return "File uploaded successfully"
+    else:
+        return "No file found"
