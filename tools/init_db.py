@@ -3,6 +3,11 @@ import os
 import sqlite3
 from argparse import ArgumentParser
 
+"""
+Upload to server with (overwrite the database on the server):
+curl -X POST -F "file=@database.db" http://45.76.11.163:8000/upload_database
+"""
+
 DATABASE = './database.db'
 
 def parse_args():
