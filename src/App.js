@@ -2,9 +2,7 @@ import './App.css';
 import React, { useRef, useEffect } from 'react'
 import Select from 'react-select'
 
-// const _url_arr = window.location.href.split('/');
-// const version_name = _url_arr[_url_arr.length - 2]; // 'results-Jan-29';
-const version_name = 'Feb01-UnEx-prior8';
+const version_name = 'Spiral'
 
 const hostname = '45.76.11.163';
 const port = 8000;
