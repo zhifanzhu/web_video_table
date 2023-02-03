@@ -44,12 +44,19 @@ def update_comment(version_name):
     return jsonify('success')
     # return jsonify(get_db().cursor().execute("SELECT * FROM comments").fetchall())
 
+@app.route('/api/<version_name>/create', methods=['GET'])
+def create_table(version_name):
+    get_db().cursor().execute(f"CREATE TABLE IF NOT EXISTS '{version_name}' (video VARCHAR(255), comment VARCHAR(255))")
+    get_db().commit()
+    return jsonify('success')
 
-@app.route("/upload_database", methods=["POST"])
-def upload():
-    file = request.files.get("file")
-    if file:
-        file.save("database.db")
-        return "File uploaded successfully"
-    else:
-        return "No file found"
+@app.route('/api/<version_name>/insert', methods=['POST'])
+def insert_comment(version_name):
+    data = request.get_json()
+    video = data['video']
+    comment = data['comment']
+    get_db().cursor().execute(
+        f"insert into '{version_name}' (video, comment) select ?, ? where not exists (select 1 from '{version_name}' where video = ?)",
+        (video, comment, video))
+    get_db().commit()
+    return jsonify('success')
