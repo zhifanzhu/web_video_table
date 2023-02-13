@@ -60,3 +60,14 @@ def insert_comment(version_name):
         (video, comment, video))
     get_db().commit()
     return jsonify('success')
+
+@app.route('/api/<version_name>/init_comments', methods=['POST'])
+def init_comments(version_name):
+    videos = request.get_json()
+    for video in videos:
+        comment = 'NotCheck'
+        get_db().cursor().execute(
+            f"insert into '{version_name}' (video, comment) select ?, ? where not exists (select 1 from '{version_name}' where video = ?)",
+            (video, comment, video))
+    get_db().commit()
+    return jsonify('success')

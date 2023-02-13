@@ -12,15 +12,16 @@ const options = [
   { value: 'FrankMocap', label: 'FrankMocap' }, // Include HandOcclude
 
   { value: 'Poor-Obj-Rot', label: 'Poor-Obj-Rot' },
-  { value: 'Poor-Physical', label: 'Poor-No-Contact' },
-  { value: 'Unexplained', label: 'Unexplained' },
+  { value: 'No-Contact', label: 'No-Contact' },
+  { value: 'Intersect', label: 'Intersect' },
 
-  { value: 'ObjMask', label: 'ObjMask' },
   { value: 'CAD', label: 'CAD' },
-  { value: 'BadLabel', label: 'BadLabel' },
   { value: 'Success', label: 'Success' },
 
-  { value: 'Unfinished', label: 'NotCheck' },
+  { value: 'Unexplained', label: 'Unexplained' },
+  { value: 'ObjMask', label: 'ObjMask' },
+  { value: 'BadLabel', label: 'BadLabel' },
+  { value: 'NotCheck', label: 'NotCheck' },
 ]
 
 function DataRow(props) {
@@ -29,7 +30,6 @@ function DataRow(props) {
   const video = props.video;
   const comments = props.comments;
   const src = `./${version_name}/${props.video}`;
-  console.log(src)
   let comp = null;
   if (!loaded) {
     comp = <label>Off-Line</label>
