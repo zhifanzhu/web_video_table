@@ -14,7 +14,7 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    mask_videos_dir = '/home/skynet/Zhifan/ihoi/outputs/tmp/v3_mask_videos_occlude/'
+    mask_videos_dir = '/home/skynet/Zhifan/ihoi/outputs/video/v3_mask_videos_occlude/'
     videos = glob.glob(osp.join(args.src, '*_action.mp4'))
     num_missing = 0
     os.makedirs(args.dst, exist_ok=True)
@@ -27,4 +27,8 @@ if __name__ == '__main__':
             continue
         shutil.copyfile(osp.join(mask_videos_dir, mask_basename),
                         osp.join(args.dst, osp.basename(video).replace('_action', '_mask')))
+
+        metric_base_name = osp.basename(video).replace('_action.mp4', '_best_metric.json')
+        shutil.copyfile(osp.join(args.src, metric_base_name), 
+                        osp.join(args.dst, metric_base_name))
     print("num_missing", num_missing)

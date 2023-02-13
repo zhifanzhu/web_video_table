@@ -2,10 +2,12 @@ import './App.css';
 import React, { useState, useRef, useEffect } from 'react'
 import Select from 'react-select'
 
-const version_name = 'Feb03-sweep'
+const version_name = 'metric_part1'
 
 const hostname = '45.76.11.163';
 const port = 8000;
+
+const cats = ['bottle', 'plate', 'bowl', 'cup', 'mug', 'can'];
 
 const options = [
   { value: 'HandSmooth', label: 'HandSmooth' },
@@ -25,11 +27,26 @@ const options = [
 ]
 
 function DataRow(props) {
+  const [iou, setIou] = useState(-1);
+  const [collision, setCollision] = useState(-1);
+  const [min_dist, setMinDist] = useState(-1);
+
   const index = props.index;
   const loaded = props.loaded;
   const video = props.video;
   const comments = props.comments;
   const src = `./${version_name}/${props.video}`;
+
+  useEffect(() => {
+    const metric_src = `./${version_name}/${props.video.replace("_action.mp4", "_best_metric.json")}`;
+    fetch(metric_src).then(resp => resp.json())
+      .then(data => {
+        setIou(data['iou']);
+        setCollision(data['collision']);
+        setMinDist(data['min_dist']);
+      });
+  }, []);
+
   let comp = null;
   if (!loaded) {
     comp = <label>Off-Line</label>
@@ -61,17 +78,22 @@ function DataRow(props) {
     <td>{index}</td>
     <td>{video}</td>
     <td>
-      {/* <img src={src.replace("_action.mp4", "_input.png")} width={512}/> */}
       <video width={468} src={src.replace("_action", "_mask")} controls />
     </td>
     <td>
       <video width={468} src={src} controls />
     </td>
-    <td>{comp}</td>
+    <td>
+      iou: {iou}<br></br>
+      collision: {collision}<br></br>
+      min_dist: {min_dist}<br></br>
+      {comp}
+    </td>
   </tr>
 }
 
 function App() {
+  const [curCat, setCurCat] = useState('bottle'); // TODO
   const [currentPage, setCurrentPage] = useState(1);
   const [dataPerPage] = useState(200);
   const [totalPages, setTotalPages] = useState(0);

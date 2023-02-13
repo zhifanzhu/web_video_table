@@ -9,7 +9,7 @@ echo $VERSION_NAME
 curl -X GET "http://${SERVER}/api/${VERSION_NAME}/create"
 
 url="http://${SERVER}/api/${VERSION_NAME}/init_comments"
-videos=$(ls $VIDEO_DIR)
+videos=$(find $VIDEO_DIR -name '*_action.mp4' | xargs -I{} basename {})
 json=$(printf '%s\n' "${videos[@]}" | jq -R . | jq -s .)
 file=/tmp/init_comments.json
 echo $json > $file
