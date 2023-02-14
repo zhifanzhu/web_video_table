@@ -2,7 +2,7 @@ import './App.css';
 import React, { useState, useRef, useEffect } from 'react'
 import Select from 'react-select'
 
-const version_name = 'metric_part1'
+const version_name = 'Metric-Feb12'
 
 const hostname = '45.76.11.163';
 const port = 8000;
@@ -27,35 +27,20 @@ const options = [
 ]
 
 function DataRow(props) {
-  const [iou, setIou] = useState(-1);
-  const [collision, setCollision] = useState(-1);
-  const [min_dist, setMinDist] = useState(-1);
-
   const index = props.index;
   const loaded = props.loaded;
   const video = props.video;
   const comments = props.comments;
   const src = `./${version_name}/${props.video}`;
 
-  useEffect(() => {
-    const metric_src = `./${version_name}/${props.video.replace("_action.mp4", "_best_metric.json")}`;
-    fetch(metric_src).then(resp => resp.json())
-      .then(data => {
-        setIou(data['iou']);
-        setCollision(data['collision']);
-        setMinDist(data['min_dist']);
-      });
-  }, []);
-
   let comp = null;
   if (!loaded) {
     comp = <label>Off-Line</label>
   } else {
     comp = <Select options={options}
-      defaultValue={options.find(({ value }) => value === comments.current[video])}
+      defaultValue={options.find(({ value }) => value === comments.current[video]['comment'])}
       onChange={(e) => {
-        comments.current[video] = e.value;
-        // console.log(comments.current[video]);
+        comments.current[video]['comment'] = e.value;
         fetch(`http://${hostname}:${port}/api/${version_name}/update_comment`, {
           method: "POST",
           headers: {
@@ -63,7 +48,7 @@ function DataRow(props) {
           },
           body: JSON.stringify({
             video: video,
-            comment: comments.current[video],
+            comment: comments.current[video]['comment'],
           }),
         }).then(resp => resp.json())
           .then(data => {
@@ -84,9 +69,9 @@ function DataRow(props) {
       <video width={468} src={src} controls />
     </td>
     <td>
-      iou: {iou}<br></br>
-      collision: {collision}<br></br>
-      min_dist: {min_dist}<br></br>
+      iou: {comments.current[video]['iou']}<br></br>
+      collision: {comments.current[video]['collision']}<br></br>
+      min_dist: {comments.current[video]['min_dist']}<br></br>
       {comp}
     </td>
   </tr>
@@ -135,6 +120,7 @@ function App() {
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
   const currentData = videos.slice(indexOfFirstData, indexOfLastData);
+  console.log(comments)
 
   let index = indexOfFirstData;
   for (const video of currentData) {

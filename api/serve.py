@@ -8,6 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 DATABASE = './database.db'
+""" Current table (video, comment, iou, collision, min_dist)
+"""
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -22,16 +24,15 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+
 @app.route('/api/<version_name>/get_all_comments', methods=['GET'])
 def get_all_comments(version_name):
     res = get_db().cursor().execute(f"SELECT * FROM '{version_name}'").fetchall()
-    res = {i[0]: i[1] for i in res}  # convert list to dict
+    res = {
+        i[0]: dict(
+        comment=i[1], iou=i[2], collision=i[3], min_dist=i[4]) 
+        for i in res}
     return jsonify(res)
-
-@app.route('/api/<version_name>/get_comment', methods=['POST'])
-def get_comment(version_name):
-    video = request.get_json()['video']
-    return jsonify(get_db().cursor().execute(f"SELECT comment FROM '{version_name}' WHERE video = ?", (video,)).fetchone())
 
 """ update comment for a video """
 @app.route('/api/<version_name>/update_comment', methods=['POST'])
@@ -39,35 +40,37 @@ def update_comment(version_name):
     data = request.get_json()
     video = data['video']
     comment = data['comment']
-    get_db().cursor().execute(f"UPDATE '{version_name}' SET comment = ? WHERE video = ?", (comment, video))
+    get_db().cursor().execute(
+        f"UPDATE '{version_name}' SET comment = ? WHERE video = ?", (comment, video))
     get_db().commit()
     return jsonify('success')
     # return jsonify(get_db().cursor().execute("SELECT * FROM comments").fetchall())
 
 @app.route('/api/<version_name>/create', methods=['GET'])
 def create_table(version_name):
-    get_db().cursor().execute(f"CREATE TABLE IF NOT EXISTS '{version_name}' (video VARCHAR(255), comment VARCHAR(255))")
-    get_db().commit()
-    return jsonify('success')
-
-@app.route('/api/<version_name>/insert', methods=['POST'])
-def insert_comment(version_name):
-    data = request.get_json()
-    video = data['video']
-    comment = data['comment']
     get_db().cursor().execute(
-        f"insert into '{version_name}' (video, comment) select ?, ? where not exists (select 1 from '{version_name}' where video = ?)",
-        (video, comment, video))
+        f"CREATE TABLE IF NOT EXISTS \
+        '{version_name}' \
+        (video VARCHAR(255), comment VARCHAR(255), \
+            iou REAL, collision REAL, min_dist REAL)")
     get_db().commit()
     return jsonify('success')
 
 @app.route('/api/<version_name>/init_comments', methods=['POST'])
 def init_comments(version_name):
-    videos = request.get_json()
-    for video in videos:
+    data_list = request.get_json()
+    for data in data_list:
+        video = data['video']
+        iou = data['iou']
+        collision = data['collision']
+        min_dist = data['min_dist']
+
         comment = 'NotCheck'
         get_db().cursor().execute(
-            f"insert into '{version_name}' (video, comment) select ?, ? where not exists (select 1 from '{version_name}' where video = ?)",
-            (video, comment, video))
+            f"insert into '{version_name}' \
+                (video, comment, iou, collision, min_dist) \
+                select ?, ?, ?, ?, ? \
+                where not exists (select 1 from '{version_name}' where video = ?)",
+            (video, comment, iou, collision, min_dist, video))
     get_db().commit()
     return jsonify('success')

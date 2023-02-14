@@ -28,7 +28,7 @@ if __name__ == '__main__':
         shutil.copyfile(osp.join(mask_videos_dir, mask_basename),
                         osp.join(args.dst, osp.basename(video).replace('_action', '_mask')))
 
-        metric_base_name = osp.basename(video).replace('_action.mp4', '_best_metric.json')
-        shutil.copyfile(osp.join(args.src, metric_base_name), 
-                        osp.join(args.dst, metric_base_name))
+        # metric_base_name = osp.basename(video).replace('_action.mp4', '_best_metric.json')
+        # shutil.copyfile(osp.join(args.src, metric_base_name), 
+        #                 osp.join(args.dst, metric_base_name))
     print("num_missing", num_missing)
