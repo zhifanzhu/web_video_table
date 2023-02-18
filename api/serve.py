@@ -61,9 +61,9 @@ def init_comments(version_name):
     data_list = request.get_json()
     for data in data_list:
         video = data['video']
-        iou = data['iou']
-        collision = data['collision']
-        min_dist = data['min_dist']
+        iou = data.get('iou', -1)
+        collision = data.get('collision', -1)
+        min_dist = data.get('min_dist', -1)
 
         comment = 'NotCheck'
         get_db().cursor().execute(

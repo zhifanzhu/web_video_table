@@ -14,6 +14,6 @@ python tools/copy_videos.py $VIDEO_DIR public/$VERSION_NAME
 
 sed -i "/const version/s/=.*/= '${VERSION_NAME}'/" src/App.js
 
-# yarn run build
+yarn run build
 
-# mv build $VERSION_NAME && zip -r $VERSION_NAME.zip $VERSION_NAME && rm -rf $VERSION_NAME public/$VERSION_NAME
+mv build $VERSION_NAME && zip -r $VERSION_NAME.zip $VERSION_NAME && rm -rf $VERSION_NAME public/$VERSION_NAME
